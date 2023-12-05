@@ -96,7 +96,7 @@ function createWindow() {
   if (VITE_DEV_SERVER_URL) {
     mainWindow.loadURL(winUrl)
   } else {
-    mainWindow?.webContents.send('console', JSON.stringify({ winUrl: winUrl }))
+    // const url = encodeURI('file://' + __dirname + '/index.html')
     mainWindow.loadFile(winUrl)
   }
 }

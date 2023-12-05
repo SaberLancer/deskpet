@@ -1,6 +1,7 @@
 const { spawn } = require('child_process');
 const path = require('path');
 import { ipcMain, BrowserWindow } from 'electron'
+import { mainWindow } from './main'
 
 const cookie = "di_c_mti=84c71244-c6d6-6fad-94d5-8871e8eb5b8c; d_d_app_ver=1.4.0; daas_st={%22sdk_ver%22:%221.3.9%22%2C%22status%22:%220%22}; appid=150b4dfebe; d_d_ci=c43db2c5-be50-6dbd-a843-e5ab25bec793; ssoSessionId=91e72aed-f3c5-4b46-95ac-f8fde8a7b393; account_id=17876584134; gt_local_id=/IICsVkum+lO9c6kHEJcN2haRPTE3Z7RXm/DFx9wBYXd2a1UuNMIwA=="
 const fd = "945990"
@@ -11,61 +12,75 @@ let chatId = ""
 ipcMain.on('chat-start', sendMessage);
 
 function sendMessage(event: any, position: any) {
-    let win: any = null
-    // 要执行的 Python 脚本和参数
-    const pythonScriptPath = path.join(__dirname, '../sparkdesk_webs/chat.py');
-    const pythonArgs = [position, cookie, fd, GtToken, chatId];
+    try {
 
-    // 启动 Python 子进程
-    const pythonProcess = spawn('python3', [pythonScriptPath, ...pythonArgs]);
+        let win: any = null
+        // 要执行的 Python 脚本和参数
+        const pythonScriptPath = path.join(__dirname, '../sparkdesk_webs/chat.py');
+        const pythonArgs = [position, cookie, fd, GtToken, chatId];
 
-    // 监听子进程的标准输出
-    pythonProcess.stdout.on('data', (data: any) => {
-        const result = data.toString();
-        const webContents = event.sender
-        win = BrowserWindow.fromWebContents(webContents)
-        event.sender.send('chat-continue', result)
-        // event.reply('chat-end', result)
-        // console.log(`Python 插件返回结果: ${result}`);
-    });
+        // 启动 Python 子进程
+        const pythonProcess = spawn('python3', [pythonScriptPath, ...pythonArgs]);
 
-    // 监听子进程的错误输出
-    pythonProcess.stderr.on('data', (data: any) => {
-        console.error(`Python 插件错误: ${data}`);
-    });
+        // 监听子进程的标准输出
+        pythonProcess.stdout.on('data', (data: any) => {
+            const result = data.toString();
+            const webContents = event.sender
+            win = BrowserWindow.fromWebContents(webContents)
+            event.sender.send('chat-continue', result)
+            // event.reply('chat-end', result)
+            // console.log(`Python 插件返回结果: ${result}`);
+        });
 
-    // 在子进程完成后执行回调
-    pythonProcess.on('close', (code: any) => {
-        win?.webContents.send('chat-end')
-        console.log(`Python 子进程已退出，退出码 ${code}`);
-    });
+        // 监听子进程的错误输出
+        pythonProcess.stderr.on('data', (data: any) => {
+            console.error(`Python 插件错误: ${data}`);
+            mainWindow?.webContents.send('console', JSON.stringify({ error: `Python 插件错误: ${data}` }))
+        });
+
+        // 在子进程完成后执行回调
+        pythonProcess.on('close', (code: any) => {
+            win?.webContents.send('chat-end')
+            mainWindow?.webContents.send('console', JSON.stringify({ error: `Python 子进程已退出，退出码 ${code}` }))
+            console.log(`Python 子进程已退出，退出码 ${code}`);
+        });
+    } catch (error) {
+
+        mainWindow?.webContents.send('console', JSON.stringify({ error: error }))
+    }
 }
 
 function initChat() {
-    // 要执行的 Python 脚本和参数
-    const pythonScriptPath = path.join(__dirname, '../sparkdesk_webs/start.py');
-    const pythonArgs = [cookie, fd, GtToken];
+    try {
+        // 要执行的 Python 脚本和参数
+        const pythonScriptPath = path.join(__dirname, '../sparkdesk_webs/start.py');
+        const pythonArgs = [cookie, fd, GtToken];
 
-    // 启动 Python 子进程
-    const pythonProcess = spawn('python3', [pythonScriptPath, ...pythonArgs]);
+        // 启动 Python 子进程
+        const pythonProcess = spawn('python3', [pythonScriptPath, ...pythonArgs]);
 
-    // 监听子进程的标准输出
-    pythonProcess.stdout.on('data', (data: any) => {
-        const result = data.toString();
-        chatId = result
-        // event.reply('chat-end', result)
-        // console.log(`Python 插件返回结果: ${result}`);
-    });
+        // 监听子进程的标准输出
+        pythonProcess.stdout.on('data', (data: any) => {
+            const result = data.toString();
+            chatId = result
+            // event.reply('chat-end', result)
+            // console.log(`Python 插件返回结果: ${result}`);
+        });
 
-    // 监听子进程的错误输出
-    pythonProcess.stderr.on('data', (data: any) => {
-        console.error(`Python 插件错误: ${data}`);
-    });
+        // 监听子进程的错误输出
+        pythonProcess.stderr.on('data', (data: any) => {
+            console.error(`Python 插件错误: ${data}`);
+            mainWindow?.webContents.send('console', JSON.stringify({ error2: `Python 插件错误: ${data}` }))
+        });
 
-    // 在子进程完成后执行回调
-    pythonProcess.on('close', (code: any) => {
-        console.log(`Python 子进程已退出，退出码 ${code}`);
-    });
+        // 在子进程完成后执行回调
+        pythonProcess.on('close', (code: any) => {
+            console.log(`Python 子进程已退出，退出码 ${code}`);
+            mainWindow?.webContents.send('console', JSON.stringify({ error2: `Python 子进程已退出，退出码 ${code}` }))
+        });
+    } catch (error) {
+        mainWindow?.webContents.send('console', JSON.stringify({ error: error }))
+    }
 }
 
 export { initChat }

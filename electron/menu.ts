@@ -1,6 +1,6 @@
 import { Menu } from 'electron'
 import { createChildWindow } from './createChidWindow'
-// import { initChat } from './python'
+import { initChat } from './python'
 import { mainWindow } from './main'
 const menu = Menu.buildFromTemplate([
     // {
@@ -10,12 +10,9 @@ const menu = Menu.buildFromTemplate([
     {
         click: () => {
             try {
-                const child = createChildWindow('#/chat', { width: 300, height: 400, title: 'Chat' }, true)
-
-                mainWindow?.webContents.send('console', JSON.stringify({ child: child }))
+                const child = createChildWindow('chat', { width: 300, height: 400, title: 'Chat' }, true)
                 child.once('show', () => {
-                    // initChat()
-                    mainWindow?.webContents.send('console', 2222)
+                    initChat()
                 })
             } catch (e) {
 

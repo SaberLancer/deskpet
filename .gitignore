@@ -1,2 +1,5 @@
 node_modules
 .history
+dist
+release
+.DS_Store

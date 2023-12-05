@@ -47,7 +47,7 @@ function createChildWindow(url: string, customOption: any = null, resizable: boo
     if (VITE_DEV_SERVER_URL) {
         child.loadURL(winUrl + url)
     } else {
-        child.loadFile(winUrl + '/' + url)
+        child.loadFile(winUrl, { hash: url })
     }
 
     child.webContents.once("did-finish-load", () => {
