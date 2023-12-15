@@ -1,6 +1,6 @@
 import { Menu } from 'electron'
 import { createChildWindow } from './createChidWindow'
-import { initChat } from './python'
+import { initChat } from './chat'
 import { mainWindow } from './main'
 const menu = Menu.buildFromTemplate([
     // {
@@ -21,12 +21,12 @@ const menu = Menu.buildFromTemplate([
         },
         label: 'TODO'
     },
-    {
-        click: () => {
-            mainWindow?.webContents.openDevTools();
-        },
-        label: 'DevTools'
-    }
+    // {
+    //     click: () => {
+    //         mainWindow?.webContents.openDevTools();
+    //     },
+    //     label: 'DevTools'
+    // }
 ])
 
 export default menu

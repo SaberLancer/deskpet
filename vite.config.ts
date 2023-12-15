@@ -32,7 +32,7 @@ export default defineConfig({
         importStyle: false, // css in js
       })],
       // dts: 'typings/auto/components.d.ts',
-    }),
+    })
   ],
   resolve: {
     // 在导入模块时，如果模块路径不包含文件扩展名，则会尝试添加下面这些扩展名
@@ -41,19 +41,6 @@ export default defineConfig({
       '@': path.resolve(__dirname, 'src'),
     },
   },
-  // build: {
-  //   rollupOptions: {
-  //     output: {
-  //       assetFileNames: (assetInfo) => {
-  //         console.log(assetInfo, 22)
-  //         if (assetInfo.type === 'asset' && /\.(jpe?g|png|gif)$/i.test(assetInfo.name)) {
-  //           return 'assets/bat/[name].[ext]';
-  //         }
-  //         return 'assets/[name].[hash].[ext]';
-  //       },
-  //     }
-  //   }
-  // }
   // css: {
   //   preprocessorOptions: {
   //     less: {

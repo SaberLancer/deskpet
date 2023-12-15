@@ -36,7 +36,7 @@ function createChildWindow(url: string, customOption: any = null, resizable: boo
         Object.assign(option, customOption)
     }
     child = new BrowserWindow(option)
-    child.webContents.openDevTools();
+    // child.webContents.openDevTools();
     child.setIgnoreMouseEvents(!resizable)
     // 设置子窗口位置以产生相对于主窗口的偏移
     const parentPosition = mainWindow?.getPosition() || [];
@@ -45,7 +45,7 @@ function createChildWindow(url: string, customOption: any = null, resizable: boo
     child.setPosition(parentPosition?.[0] + xOffset, parentPosition?.[1] + yOffset);
     mainWindow?.webContents.send('console', JSON.stringify({ child: winUrl + url }))
     if (VITE_DEV_SERVER_URL) {
-        child.loadURL(winUrl + url)
+        child.loadURL(winUrl + '#/' + url)
     } else {
         child.loadFile(winUrl, { hash: url })
     }

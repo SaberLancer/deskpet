@@ -2,7 +2,7 @@ import { app, BrowserWindow, screen } from 'electron'
 import path from 'node:path'
 import './ipcMain'
 import './schedule'
-import './python'
+import './chat'
 import windowMove from './windowMove'
 import Store from 'electron-store'
 import menu from './menu'
@@ -42,7 +42,6 @@ let x: number = 0 // 主窗口生成右侧坐标
 let y: number = 0 // 主窗口生成底部坐标
 
 // 🚧 Use ['ENV_NAME'] avoid vite:define plugin - Vite@2.x
-console.log('VITE_DEV_SERVER_URL', VITE_DEV_SERVER_URL)
 if (VITE_DEV_SERVER_URL) {
   winUrl = VITE_DEV_SERVER_URL
 } else {
@@ -70,9 +69,9 @@ function createWindow() {
       preload: path.join(__dirname, 'preload.js'),
       sandbox: false
     },
-    // frame: false,
-    // transparent: true,
-    // resizable: false,
+    frame: false,
+    transparent: true,
+    resizable: false,
     alwaysOnTop: true
   })
 
@@ -80,9 +79,6 @@ function createWindow() {
   mainWindow.setAlwaysOnTop(true, "screen-saver"); // - 2 -
   // 设置窗口在所有工作区都可见
   mainWindow.setVisibleOnAllWorkspaces(true); // - 3 -
-
-
-  mainWindow.webContents.openDevTools();
 
   // Test active push message to Renderer-process.
   mainWindow.webContents.on('did-finish-load', () => {
