@@ -1,25 +1,26 @@
 <template>
     <div class="main" id="main">
-        <div class="chat-message" v-for="messgae in state.chatMessage">
+        <div class="chat-message" v-for="(message, index) in state.chatMessage">
             <div class="chat-message-content">
                 <span class="chat-image">
                     <img src="@/assets/images/22.png" alt="">
                 </span>
-                <div class="text" style="background: transparent;">{{ messgae.position }}</div>
+                <div class="text" style="background: transparent;">{{ message.position }}</div>
             </div>
             <div class="chat-message-content">
                 <span class="chat-image">
                     <img src="http://124.221.105.45/images/zp3.png" alt="">
                 </span>
-                <div class="text" v-if="messgae.result">{{ messgae.result }}</div>
-                <div class="text" v-else>
-                    <loading-outlined />
-                    <span style="margin-left: 10px;">回答中...</span>
+                <div class="text">
+                    <Markdown v-if="message.result" :className="`question-stem-${index}`" :index="index" :message="message"
+                        @again="again">
+                    </Markdown>
+                    <span v-else style="margin-left: 10px;"><loading-outlined />回答中...</span>
                 </div>
             </div>
         </div>
         <div class="chat-input">
-            <a-input class="input" v-model:value="state.chatPosition" placeholder="Basic usage" @keyup.enter="send" />
+            <a-input class="input" v-model:value="state.chatPosition" placeholder="Basic usage" @pressEnter="send" />
             <a-button type="primary" @click="send">发送</a-button>
         </div>
     </div>
@@ -30,6 +31,7 @@ import { reactive, watch } from 'vue'
 import {
     LoadingOutlined,
 } from '@ant-design/icons-vue';
+// import Markdown from './components/markdown.vue'
 // import log from "../../utils/console";
 const state: any = reactive({
     chatPosition: '',
@@ -47,10 +49,13 @@ const send = () => {
     state.isChat = true
     window.ipcRenderer.send("chat-start", state.chatPosition)
     window.ipcRenderer.on("chat-continue", (_, res) => {
-        state.chatMessage[state.chatMessage.length - 1].result += res
+        let message = state.chatMessage[state.chatMessage.length - 1]
+        message.result += res
     });
     window.ipcRenderer.on("chat-end", () => {
+        let message = state.chatMessage[state.chatMessage.length - 1]
         state.isChat = false
+        message.end = true
         window.ipcRenderer.removeAllListeners('chat-continue');
     });
     let messgae = {
@@ -59,6 +64,20 @@ const send = () => {
     }
     state.chatMessage.push(messgae)
     state.chatPosition = ''
+}
+
+const again = (obj: any) => {
+    window.ipcRenderer.send("chat-start", obj.position)
+    state.chatMessage[obj.index].result = ''
+    window.ipcRenderer.on("chat-continue", (_: any, res: any) => {
+        let message = state.chatMessage[obj.index]
+        message.result += res
+    });
+    window.ipcRenderer.on("chat-end", () => {
+        let message = state.chatMessage[obj.index]
+        message.end = true
+        window.ipcRenderer.removeAllListeners('chat-continue');
+    });
 }
 </script>
 

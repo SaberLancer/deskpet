@@ -17,9 +17,10 @@ declare module 'vue' {
     ASpace: typeof import('ant-design-vue/es')['Space']
     ATextarea: typeof import('ant-design-vue/es')['Textarea']
     ATimePicker: typeof import('ant-design-vue/es')['TimePicker']
+    Markdown: typeof import('./src/views/chat/components/markdown.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
-    TodoPopup: typeof import('./src/components/todoPopup.vue')['default']
-    TodoReminder: typeof import('./src/components/todoReminder.vue')['default']
+    TodoPopup: typeof import('./src/views/todo/components/todoPopup.vue')['default']
+    TodoReminder: typeof import('./src/views/todo/components/todoReminder.vue')['default']
   }
 }

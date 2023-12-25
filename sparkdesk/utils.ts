@@ -5,7 +5,15 @@ const logFileName = "sparkdesk_web/log/session_log.json";
 
 export function decode(text: string): string {
     try {
-        const decodedData = Buffer.from(text, 'base64').toString('utf-8');
+        let decodedData = ''
+        if (text.length > 4) {
+            const arr = text.split('\n\n')
+            arr.forEach(item => {
+                decodedData += Buffer.from(item.trim(), 'base64').toString('utf-8');
+            })
+        } else {
+            decodedData = Buffer.from(text, 'base64').toString('utf-8');
+        }
         return decodedData;
     } catch (e) {
         return '';

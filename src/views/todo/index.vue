@@ -1,39 +1,24 @@
 <template>
   <div class="todo-box">
-    <a-card
-      v-for="(item, index) in todoList"
-      :title="item.title"
-      :hoverable="true">
+    <a-card v-for="(item, index) in todoList" :title="item.title" :hoverable="true">
       <template #extra>
         <a-space>
           <EditTwoTone @click="edit(item, index)" />
-          <check-circle-two-tone
-            two-tone-color="#52c41a"
-            @click="fulfill(index)" />
+          <check-circle-two-tone two-tone-color="#52c41a" @click="fulfill(index)" />
           <BellTwoTone two-tone-color="#eb2f96" @click="openReminder(index)" />
         </a-space>
       </template>
       {{ item.text }}
     </a-card>
   </div>
-  <todoPopup
-    v-if="editShow"
-    v-model:show="editShow"
-    :info="editInfo"
-    @changeInfo="changeInfo">
+  <todoPopup v-if="editShow" v-model:show="editShow" :info="editInfo" @changeInfo="changeInfo">
   </todoPopup>
-  <todoReminder
-    v-if="reminderShow"
-    v-model:show="reminderShow"
-    :date="todoList[reminderIndex].date"
+  <todoReminder v-if="reminderShow" v-model:show="reminderShow" :date="todoList[reminderIndex].date"
     @setReminder="setReminder">
   </todoReminder>
-  <a-float-button
-    type="default"
-    :style="{
-      right: '24px',
-    }"
-    @click="addCard">
+  <a-float-button type="default" :style="{
+    right: '24px',
+  }" @click="addCard">
     <template #icon>
       <PlusOutlined />
     </template>
@@ -47,8 +32,8 @@ import {
   BellTwoTone,
   PlusOutlined,
 } from "@ant-design/icons-vue";
-import todoPopup from "@/components/todoPopup.vue";
-import todoReminder from "@/components/todoReminder.vue";
+// import todoPopup from "@/views/todo/components/todoPopup.vue";
+// import todoReminder from "@/views/todo/components/todoReminder.vue";
 import { formatDay } from "@/utils/formatDay";
 import { ref, reactive } from "vue";
 let todoList = reactive([
@@ -121,38 +106,46 @@ const addCard = () => {
   margin: 0;
   padding: 0;
 }
+
 .todo-box {
   padding: 10px;
   font-size: 12px;
   background: #fff;
   text-align: left;
   -webkit-app-region: drag;
+
   & :deep(.ant-card) {
     margin-bottom: 20px;
     box-shadow: 5px 5px 5px #f0f0f0;
   }
 }
+
 .todo-box :deep(.ant-card-head) {
   min-height: 40px;
   padding: 0 15px;
 }
+
 .todo-box :deep(.ant-card-body) {
   padding: 15px;
 }
+
 .todo-item {
   /* border: 1px solid #ccc; */
   /* border-radius: 5px; */
   border-bottom: 1px solid #ccc;
   text-align: left;
   padding: 10px 5px;
+
   .todo-item-title {
     font-size: 16px;
     font-weight: bold;
     margin-bottom: 2px;
   }
+
   /* .todo-item-content {
   } */
 }
+
 .icons-list :deep(.anticon) {
   margin-right: 6px;
   font-size: 24px;

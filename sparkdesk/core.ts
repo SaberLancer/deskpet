@@ -124,25 +124,21 @@ class SparkWeb {
         let responseText = '';
         return new Promise((resolve, reject) => {
             this.getResponse(question).then((response) => {
-                response.data.on('data', (chunk: any) => {
-                    const line = chunk.toString('utf-8')
-                    if (line) {
-                        let encodedData = line.replace(/data:/g, "");
-                        const missingPadding = encodedData.length % 4;
-                        if (missingPadding !== 0) {
-                            encodedData += '='.repeat(4 - missingPadding);
-                        }
-                        if (decode(encodedData) !== 'zw' && encodedData !== '<end>' && !encodedData.includes("<sid>")) {
-                            const answer = decode(encodedData).replace('\n\n', '\n');
-                            responseText += answer;
-                            try {
-                                this.win?.webContents.send('chat-continue', answer.toString())
-                            } catch (error) {
-                                reject()
+                try {
+                    response.data.on('data', (chunk: any) => {
+                        const line = chunk.toString('utf-8')
+                        let encodedData = line.replace(/data:/g, "").trim();
+                        if (encodedData) {
+                            if (encodedData !== '<end>' && !encodedData.includes("<sid>")) {
+                                const answer = decode(encodedData);
+                                responseText += answer;
+                                this.win?.webContents.send('chat-continue', answer)
                             }
                         }
-                    }
-                });
+                    });
+                } catch (error) {
+                    console.log(error)
+                }
                 response.data.on('end', () => {
                     // 数据接收完成的逻辑
                     try {

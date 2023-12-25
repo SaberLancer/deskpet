@@ -27,11 +27,11 @@ export default defineConfig({
     // 自动在vue文件中引入使用的VantUI组件
     Components({
       // 为了在vue文件中点击组件名称时,可以跳转到组件的定义文件,移除自动导入src/components下自定义组件功能
-      // dirs: [],
+      dirs: ['src/components', 'src/views/**/components'],
       resolvers: [AntDesignVueResolver({
         importStyle: false, // css in js
       })],
-      // dts: 'typings/auto/components.d.ts',
+      dts: 'components.d.ts',
     })
   ],
   resolve: {

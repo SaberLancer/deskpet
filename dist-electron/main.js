@@ -34602,7 +34602,15 @@ function createRequestHeader(cookie2) {
 }
 function decode(text) {
   try {
-    const decodedData = Buffer.from(text, "base64").toString("utf-8");
+    let decodedData = "";
+    if (text.length > 4) {
+      const arr = text.split("\n\n");
+      arr.forEach((item) => {
+        decodedData += Buffer.from(item.trim(), "base64").toString("utf-8");
+      });
+    } else {
+      decodedData = Buffer.from(text, "base64").toString("utf-8");
+    }
     return decodedData;
   } catch (e) {
     return "";
@@ -34708,26 +34716,22 @@ class SparkWeb {
     let responseText = "";
     return new Promise((resolve2, reject) => {
       this.getResponse(question).then((response) => {
-        response.data.on("data", (chunk) => {
-          var _a;
-          const line = chunk.toString("utf-8");
-          if (line) {
-            let encodedData = line.replace(/data:/g, "");
-            const missingPadding = encodedData.length % 4;
-            if (missingPadding !== 0) {
-              encodedData += "=".repeat(4 - missingPadding);
-            }
-            if (decode(encodedData) !== "zw" && encodedData !== "<end>" && !encodedData.includes("<sid>")) {
-              const answer = decode(encodedData).replace("\n\n", "\n");
-              responseText += answer;
-              try {
-                (_a = this.win) == null ? void 0 : _a.webContents.send("chat-continue", answer.toString());
-              } catch (error2) {
-                reject();
+        try {
+          response.data.on("data", (chunk) => {
+            var _a;
+            const line = chunk.toString("utf-8");
+            let encodedData = line.replace(/data:/g, "").trim();
+            if (encodedData) {
+              if (encodedData !== "<end>" && !encodedData.includes("<sid>")) {
+                const answer = decode(encodedData);
+                responseText += answer;
+                (_a = this.win) == null ? void 0 : _a.webContents.send("chat-continue", answer);
               }
             }
-          }
-        });
+          });
+        } catch (error2) {
+          console.log(error2);
+        }
         response.data.on("end", () => {
           var _a;
           try {
