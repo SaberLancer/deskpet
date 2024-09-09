@@ -49,6 +49,9 @@ if (VITE_DEV_SERVER_URL) {
   winUrl = path.join(process.env.DIST, 'index.html')
 }
 
+// 禁止GPU
+app.disableHardwareAcceleration();
+
 app.on("ready", () => {
   const mainScreen = screen.getPrimaryDisplay();
   const { width, height } = mainScreen.size;
@@ -80,12 +83,15 @@ function createWindow() {
   // 设置窗口在所有工作区都可见
   mainWindow.setVisibleOnAllWorkspaces(true); // - 3 -
 
+  // 打开开发者工具
+  // mainWindow?.webContents.openDevTools();
+
   // Test active push message to Renderer-process.
   mainWindow.webContents.on('did-finish-load', () => {
     windowMove(mainWindow)
-    mainWindow?.webContents.on('context-menu', () => {
-      menu.popup({ window: mainWindow })
-    })
+    // mainWindow?.webContents.on('context-menu', () => {
+    //   menu.popup({ window: mainWindow })
+    // })
     mainWindow?.webContents.send('mainScreen', screen.getPrimaryDisplay())
   })
 

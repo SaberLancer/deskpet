@@ -30,7 +30,7 @@ ipcMain.on('interaction-start', () => {
         return
     }
     //给子窗口发送消息
-    child = createChildWindow("#/interaction")
+    child = createChildWindow("interaction")
     child.once('show', () => {
         child?.webContents.send('interaction-end')
         close()
@@ -42,7 +42,7 @@ ipcMain.on('reminder', (_, message) => {
     message = JSON.parse(message)
     //给子窗口发送消息
     customTimer(message.date, () => {
-        child = createChildWindow("#/interaction", { width: 300, height: 200, title: "您有一条待办事项" }, true, true)
+        child = createChildWindow("interaction", { width: 300, height: 200, title: "您有一条待办事项" }, true, true)
         child.once('show', () => {
             child?.webContents.send('reminder-show', JSON.stringify(message.info))
         })
@@ -104,7 +104,7 @@ ipcMain.on('third', () => {
 // 监听菜单显示
 ipcMain.on('menu-show', () => {
     //给子窗口发送消息
-    child = createChildWindow("#/menu", {
+    child = createChildWindow("menu", {
         width: 200, height: 50, frame: false, transparent: true,
         resizable: false, movable: false, title: "您有一条待办事项"
     }, true)
@@ -143,7 +143,7 @@ ipcMain.handle('start-drop', () => {
     })
 });
 // 监听走路
-ipcMain.handle('start-walk', (_, number) => {
+ipcMain.handle('start-walk', (_, number: any) => {
     return new Promise((resolve) => {
         const mainScreen = screen.getPrimaryDisplay();
         const { width } = mainScreen.size;

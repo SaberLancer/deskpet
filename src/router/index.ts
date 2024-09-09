@@ -4,7 +4,7 @@ const routes: RouteRecordRaw[] = [
     {
         path: '/',
         name: 'main',
-        component: () => import('@/views/index.vue'),
+        component: () => import('@/views/main.vue'),
     },
     {
         path: '/interaction',

@@ -65,6 +65,13 @@ const md = new MarkdownIt({
                 return html;
             } catch (__) { }
         }
+        if (lang == 'multi_image_url') {
+            try {
+                const obj = JSON.parse(str)
+                const html = `<img src="${obj.url}" alt=""`;
+                return html;
+            } catch (__) { }
+        }
         return '';
     }
 })

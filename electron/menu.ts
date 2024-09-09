@@ -21,12 +21,12 @@ const menu = Menu.buildFromTemplate([
         },
         label: 'TODO'
     },
-    // {
-    //     click: () => {
-    //         mainWindow?.webContents.openDevTools();
-    //     },
-    //     label: 'DevTools'
-    // }
+    {
+        click: () => {
+            mainWindow?.webContents.openDevTools();
+        },
+        label: 'DevTools'
+    }
 ])
 
 export default menu
